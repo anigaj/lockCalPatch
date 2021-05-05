@@ -1,5 +1,5 @@
 Name:          lockscreen-upcoming
-Version:       0.9
+Version:       1.0
 Release:       1
 Summary:       Lock screen patch
 Group:         System/Patches
@@ -8,7 +8,7 @@ Distribution:  SailfishOS
 Packager: Anant Gajjar
 License:       GPL
 Requires: patchmanager
-Requires: sailfish-version >= 3.0.1
+Requires: sailfish-version >= 4.0.1
 BuildArch: noarch
 
 %description
@@ -46,6 +46,9 @@ fi
 
 %changelog
 *  Mon Sep 21 2015 Builder <builder@...>
+1.0
+- Compatible with Sailfish 4.0.1
+- Changed number of events in settings to text box input 
 0.9
 - Compatible with Sailfish 3.0.1 weather on lockscreen changes (Thanks Przemek for the code contributed)
 -  Size of box used to move by 1 pixel now relative in order to scale for higher resolution devices

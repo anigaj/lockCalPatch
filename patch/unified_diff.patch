@@ -1,20 +1,33 @@
-diff -rupN original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml patch/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml
---- original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml  2019-01-09 13:20:35.757196946 +0100
-+++ patch/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml     2019-01-15 13:12:53.365702856 +0100
-@@ -13,6 +13,7 @@ import Nemo.DBus 2.0
+--- original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml
++++ patch/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml
+@@ -15,6 +15,7 @@
  import com.jolla.lipstick 0.1
  import com.jolla.settings.system 1.0
  import org.nemomobile.lipstick 0.1
 +import org.nemomobile.configuration 1.0
+ import "../backgrounds"
  import "../main"
  import "../statusarea"
+@@ -118,16 +119,57 @@
+     ContrastBackground {
+         id: centerBackground
  
-@@ -117,7 +118,46 @@ SilicaFlickable {
+-        x: (lockItem.width - width) / 2
++      //  x: (lockItem.width - width) / 2
+         y: lockItem.contentTopMargin - clock.offset + (clock.cannotCenter
+                 ? Theme.paddingLarge
+                 : (lockItem.height - lockItem.contentTopMargin - height) / 2)
  
-         width: lockItem.width
-         height: lockItem.height - y
+-        width: Math.max(clock.width, weatherIndicator.width)
+-        height: clock.height + weatherIndicator.height
++        //width: Math.max(clock.width, weatherIndicator.width,showcalevents.width)
++      //  height: clock.height + weatherIndicator.height +showcalevents.height
+ 
++        width: lockItem.width
++        height:lockItem.height
+         opacity: Math.min(clock.transitionOpacity, clock.unlockOpacity)
 -
-+        ConfigurationGroup {
++ConfigurationGroup {
 +            id: lockscreenUpcomingSettings
 +            path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
 +            property bool fixClock: true
@@ -26,7 +39,7 @@ diff -rupN original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml pa
 +           id: showcalevents
 +           anchors 
 +           {
-+               top: lockscreenUpcomingSettings.fixClock ?  weatherIndication.bottom : undefined
++               top: lockscreenUpcomingSettings.fixClock ?  weatherIndicator.bottom : undefined
 +               topMargin:lockscreenUpcomingSettings.fixClock ?  Theme.paddingMedium: undefined
 +               right: lockscreenUpcomingSettings.fixClock ? parent.right: undefined
 +               rightMargin: lockscreenUpcomingSettings.fixClock ?  Theme.paddingMedium : undefined
@@ -57,11 +70,3 @@ diff -rupN original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml pa
          Clock {
              id: clock
  
-@@ -224,6 +264,7 @@ SilicaFlickable {
-         }
- 
-         WeatherIndicatorLoader {
-+           id: weatherIndication
-             anchors {
-                 top: clock.bottom
-                 horizontalCenter: clock.horizontalCenter

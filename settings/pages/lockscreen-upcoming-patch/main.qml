@@ -71,8 +71,19 @@ Page {
                     text: "Show next:"
                      anchors.verticalCenter: nDaysSlider.verticalCenter 
                 } 
+TextField{
+        id: nDaysSlider
+        //anchors.top: limitLabel.bottom
+      //  anchors.verticalCenter: parent.verticalCenter 
+        labelVisible: false
+        inputMethodHints:Qt.ImhFormattedNumbersOnly
+        text: lockscreenUpcomingSettings.nDaysForward
+        onActiveFocusChanged: if (!activeFocus)lockscreenUpcomingSettings.nDaysForward = text 
 
-                Slider {
+        EnterKey.onClicked: focus = false
+                    width: nDaysLabel.width  
+                }
+                /*Slider {
                     id: nDaysSlider
                     width: 265
                     maximumValue: 31
@@ -83,7 +94,7 @@ Page {
 
                    onValueChanged: lockscreenUpcomingSettings.nDaysForward = Math.round(value)
                    onPressAndHold: cancel()
-                }
+                }*/
  
                 ComboBox {
                    id: dwmComboBox
