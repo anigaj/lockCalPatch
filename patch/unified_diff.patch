@@ -1,51 +1,59 @@
 --- original/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml
 +++ patch/usr/share/lipstick-jolla-home-qt5/lockscreen/LockItem.qml
-@@ -15,6 +15,7 @@
+@@ -14,6 +14,7 @@
+ import Nemo.DBus 2.0
  import com.jolla.lipstick 0.1
- import com.jolla.settings.system 1.0
  import org.nemomobile.lipstick 0.1
 +import org.nemomobile.configuration 1.0
  import "../backgrounds"
  import "../main"
  import "../statusarea"
-@@ -118,16 +119,57 @@
-     ContrastBackground {
-         id: centerBackground
+@@ -125,9 +126,9 @@
+         property int screenY: lockItem.contentTopMargin - clock.offset
+                               + (clock.cannotCenter ? Theme.paddingLarge
+                                                     : (lockItem.height - lockItem.contentTopMargin - height) / 2)
+-        x: twoColumnMode ? screenY : (lockItem.width - width) / 2
+-        y: twoColumnMode ? ((Screen.width - height) / 2)
+-                         : screenY
++       x:(lockscreenUpcomingSettings.moveClock && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait?lockscreenUpcomingSettings.xPosClock:lockscreenUpcomingSettings.xPosLandscapeClock-clock.offset):(twoColumnMode ? screenY : (lockItem.width - width) / 2)
++        y:(lockscreenUpcomingSettings.moveClock && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait?lockscreenUpcomingSettings.yPosClock-clock.offset: lockscreenUpcomingSettings.yPosLandscapeClock)+lockItem.verticalOffset-lockItem.statusBarHeight  : (twoColumnMode ? ((Screen.width - height) / 2)
++                         : screenY)
+         width: Math.max(clock.width, weatherIndicator.width)
+         height: clock.height + weatherIndicator.height
  
--        x: (lockItem.width - width) / 2
-+      //  x: (lockItem.width - width) / 2
-         y: lockItem.contentTopMargin - clock.offset + (clock.cannotCenter
-                 ? Theme.paddingLarge
-                 : (lockItem.height - lockItem.contentTopMargin - height) / 2)
- 
--        width: Math.max(clock.width, weatherIndicator.width)
--        height: clock.height + weatherIndicator.height
-+        //width: Math.max(clock.width, weatherIndicator.width,showcalevents.width)
-+      //  height: clock.height + weatherIndicator.height +showcalevents.height
- 
-+        width: lockItem.width
-+        height:lockItem.height
-         opacity: Math.min(clock.transitionOpacity, clock.unlockOpacity)
--
+@@ -230,6 +231,56 @@
+             active: visible
+         }
+     }
 +ConfigurationGroup {
 +            id: lockscreenUpcomingSettings
 +            path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
-+            property bool fixClock: true
++            property bool fixCalPos: true
 +            property int xPos: 0
 +            property int yPos: 0
++            property int xPosLandscape: 0
++            property int yPosLandscape: 0
++            property bool moveClock: false
++
++            property int xPosClock: 0
++            property int yPosClock: 0
++            property int xPosLandscapeClock: 0
++            property int yPosLandscapeClock: 0
 +        }
 +        ShowCalEv
 +        {
 +           id: showcalevents
 +           anchors 
 +           {
-+               top: lockscreenUpcomingSettings.fixClock ?  weatherIndicator.bottom : undefined
-+               topMargin:lockscreenUpcomingSettings.fixClock ?  Theme.paddingMedium: undefined
-+               right: lockscreenUpcomingSettings.fixClock ? parent.right: undefined
-+               rightMargin: lockscreenUpcomingSettings.fixClock ?  Theme.paddingMedium : undefined
++               top: lockscreenUpcomingSettings.fixCalPos ?(lockScreenPage.isPortrait?  centerBackground.bottom : centerBackground.top) : undefined
++               topMargin:lockscreenUpcomingSettings.fixCalPos ?  Theme.paddingMedium: undefined
++               right: lockscreenUpcomingSettings.fixCalPos ? parent.right: undefined
++               rightMargin: lockscreenUpcomingSettings.fixCalPos ?  Theme.paddingMedium+(lockScreenPage.isPortrait?0:clock.offset) : undefined
 +            }
-+           x: lockscreenUpcomingSettings.fixClock ? undefined: lockscreenUpcomingSettings.xPos 
-+          y : lockscreenUpcomingSettings.fixClock ? undefined: lockscreenUpcomingSettings.yPos         
++           x: lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait? lockscreenUpcomingSettings.xPos  :lockscreenUpcomingSettings.xPosLandscape -clock.offset) 
++          y : lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait?lockscreenUpcomingSettings.yPos-clock.offset : lockscreenUpcomingSettings.yPosLandscape) +lockItem. verticalOffset-lockItem.statusBarHeight
++
++            opacity: Math.min(clock.transitionOpacity, clock.unlockOpacity)
 +           state: "hidden"
 +           states: [
 +               State 
@@ -67,6 +75,6 @@
 +               }
 +           ]
 +        }
-         Clock {
-             id: clock
  
+     ContrastBackground {
+         id: mprisBackground

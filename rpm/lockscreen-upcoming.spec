@@ -1,5 +1,5 @@
 Name:          lockscreen-upcoming
-Version:       1.0
+Version:       1.1
 Release:       1
 Summary:       Lock screen patch
 Group:         System/Patches
@@ -8,7 +8,7 @@ Distribution:  SailfishOS
 Packager: Anant Gajjar
 License:       GPL
 Requires: patchmanager
-Requires: sailfish-version >= 4.0.1
+Requires: sailfish-version >= 5.0.0
 BuildArch: noarch
 
 %description
@@ -45,7 +45,11 @@ fi
 fi
 
 %changelog
-*  Mon Sep 21 2015 Builder <builder@...>
+*  Fri Apr 04 2025 Builder <builder@...>
+1.1
+- Compatible with Sailfish 5.0.0
+- Fully supports landscape
+- Added option to change clock position which can then be moved through the set position page
 1.0
 - Compatible with Sailfish 4.0.1
 - Changed number of events in settings to text box input 

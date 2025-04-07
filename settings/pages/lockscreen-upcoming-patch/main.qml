@@ -29,7 +29,8 @@ Page {
         property color timeLabelColor: Theme.primaryColor
         property color eventLabelColor: Theme.primaryColor
         property bool showMessage: false
-        property bool fixClock: true
+        property bool fixCalPos: true
+        property bool moveClock: false
     }
 
     SilicaFlickable {
@@ -465,13 +466,23 @@ onCurrentItemChanged:lockscreenUpcomingSettings.eventLabelSize = labelToSet
                 text: "Position"
             }
            TextSwitch {
-                id: fixClock
+                id: fixCalPosition
                 width: parent.width
-                text: "Fixed below clock"
-                checked: lockscreenUpcomingSettings.fixClock
+                text: "Fixed below clock and weather"
+                checked: lockscreenUpcomingSettings.fixCalPos
                 onClicked: {
-                    lockscreenUpcomingSettings.fixClock = checked
+                    lockscreenUpcomingSettings.fixCalPos = checked
                     silFlick.contentY = silFlick.contentHeight
+                }
+            }
+            TextSwitch {
+                id: moveClock
+                visible: !lockscreenUpcomingSettings.fixCalPos
+                width: parent.width
+                text: "Allow clock to also be moved"
+                checked: lockscreenUpcomingSettings.moveClock
+                onClicked: {
+                    lockscreenUpcomingSettings.moveClock = checked
                 }
             }
            Button 
@@ -480,7 +491,7 @@ onCurrentItemChanged:lockscreenUpcomingSettings.eventLabelSize = labelToSet
                 text: "Set position"
                 //width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: !lockscreenUpcomingSettings.fixClock  
+                visible: !lockscreenUpcomingSettings.fixCalPos  
                 onClicked:  pageStack.push(Qt.resolvedUrl("SetPosition.qml"))
                
             }

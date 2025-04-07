@@ -11,9 +11,12 @@ Item
         path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
         property int xPos: 0
         property int yPos: 0
+        property int xPosLandscape: 0
+        property int yPosLandscape: 0
     }
 
     property bool isVisible
+    property  bool isPortrait
     property Item targetRt 
     
     function initialise( targetRect) 
@@ -23,8 +26,8 @@ Item
 
     MouseArea
     {
-        height: Screen.height 
-        width: Screen.width
+        height: isPortrait? Screen.height : Screen.width 
+        width: isPortrait? Screen.width : Screen.height
         enabled: fcBox.isVisible
         onClicked: isVisible = false
     }
@@ -51,7 +54,7 @@ Item
                 enabled:fcBox.isVisible
                 anchors.fill: parent
                 onClicked: {
-                    posSettings.yPos = posSettings.yPos-1
+                    isPortrait  ? posSettings.yPos = posSettings.yPos-1 : posSettings.yPosLandscape = posSettings.yPosLandscape-1
                     fcBox.targetRt.y = fcBox.targetRt.y-1
                 }
             }
@@ -69,7 +72,7 @@ Item
                 enabled:fcBox.isVisible
                 anchors.fill: parent
                 onClicked: {
-                    posSettings.yPos = posSettings.yPos+1
+                    isPortrait  ? posSettings.yPos = posSettings.yPos+1: posSettings.yPosLandscape = posSettings.yPosLandscape+1
                     fcBox.targetRt.y = fcBox.targetRt.y+1
                 }
             }
@@ -87,7 +90,7 @@ Item
                 enabled:fcBox.isVisible
                 anchors.fill: parent
                 onClicked: {
-                    posSettings.xPos = posSettings.xPos+1
+                    isPortrait?  posSettings.xPos = posSettings.xPos+1 : posSettings.xPosLandscape = posSettings.xPosLandscape+1
                     fcBox.targetRt.x = fcBox.targetRt.x+1
                 }
             }
@@ -105,7 +108,7 @@ Item
                 enabled:fcBox.isVisible
                 anchors.fill: parent
                 onClicked: {
-                    posSettings.xPos= posSettings.xPos-1
+                    isPortrait?  posSettings.xPos= posSettings.xPos-1: posSettings.xPosLandscape = posSettings.xPosLandscape-1
                     fcBox.targetRt.x = fcBox.targetRt.x-1
                 }
             }

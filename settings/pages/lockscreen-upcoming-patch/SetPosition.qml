@@ -5,6 +5,7 @@ import org.nemomobile.configuration 1.0
 Page 
 {
     id: page
+    allowedOrientations: Orientation.All
     readonly property bool largeScreen: Screen.sizeCategory >= Screen.Large
     
     ConfigurationGroup
@@ -13,11 +14,19 @@ Page
         path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
         property int xPos: 0
         property int yPos: 0
+        property int xPosLandscape: 0
+        property int yPosLandscape: 0
         property int dateLabelSize: Theme.fontSizeMedium
         property int timeLabelSize: Theme.fontSizeMedium
         property int eventLabelSize: Theme.fontSizeMedium
         property int maxEvents: 5
         property int borderThick: 2
+        property bool moveClock: false
+
+        property int xPosClock: 0
+        property int yPosClock: 0
+        property int xPosLandscapeClock: 0
+        property int yPosLandscapeClock: 0
     }
 
     Column
@@ -76,6 +85,7 @@ Page
         id: fcBox 
         z: 100
         isVisible: false
+        isPortrait : page.isPortrait 
         anchors.fill: parent
     } 
   
@@ -83,7 +93,7 @@ Page
     {
         id: statBar
         height: Theme.paddingMedium + Theme.paddingSmall + Theme.iconSizeExtraSmall
-        width: Screen.width
+        width: parent.width
         color: "transparent"
         border.color: Theme.primaryColor
         Label
@@ -97,17 +107,60 @@ Page
     Rectangle
     {
         id: clockBox
-        height: largeScreen ? Theme.fontSizeHuge*2+ Theme.fontSizeLarge + Theme.fontSizeExtraLarge * 1.1 + Theme.paddingMedium + Theme.fontSizeHuge :  Math.round(128 * Screen.widthRatio) + Math.round(40 * Screen.widthRatio) + Math.round(55 * Screen.widthRatio)+ Theme.paddingMedium+ Theme.fontSizeHuge 
+        visible: !posSettings.moveClock
+        //height: largeScreen ? Theme.fontSizeHuge*2+ Theme.fontSizeLarge + Theme.fontSizeExtraLarge * 1.1 + Theme.paddingMedium + Theme.fontSizeHuge :  Math.round(128 * Screen.widthRatio) + Math.round(40 * Screen.widthRatio) + Math.round(55 * Screen.widthRatio)+ Theme.paddingMedium+ Theme.fontSizeHuge
+
+        height: ( largeScreen ? Theme.fontSizeHuge * 2.0+ Theme.fontSizeLarge + Theme.fontSizeExtraLarge * 1.1 : Math.round(128 * Screen.widthRatio) +  Math.round(40 * Screen.widthRatio) + Math.round(55 * Screen.widthRatio))+ Theme.paddingMedium +Theme.fontSizeHuge+Theme.paddingLarge 
+
         width: Screen.width*0.5
         color: "transparent"
         border.color: Theme.primaryColor
         Label
         {
-            text: "clock"
+            text: "clock and weather"
             anchors.horizontalCenter: parent.horizontalCenter
         }
-        anchors.top: statBar.bottom
-        anchors.horizontalCenter: statBar.horizontalCenter
+       anchors.top: page.isPortrait? statBar.bottom : undefined 
+       anchors.topMargin: page.isPortrait? Screen.height / 16 + Theme.paddingLarge : undefined
+        anchors.horizontalCenter:page.isPortrait? statBar.horizontalCenter: undefined
+       anchors.left: page.isPortrait? undefined: page.left 
+       anchors.leftMargin: page.isPortrait? undefined : Screen.height / 16 + Theme.paddingLarge +78
+        anchors.verticalCenter:page.isPortrait? undefined : page.verticalCenter
+        
+    }
+    Rectangle
+    {
+        id: clockBoxMove
+        visible: posSettings.moveClock
+        height: ( largeScreen ? Theme.fontSizeHuge * 2.0+ Theme.fontSizeLarge + Theme.fontSizeExtraLarge * 1.1 : Math.round(128 * Screen.widthRatio) +  Math.round(40 * Screen.widthRatio) + Math.round(55 * Screen.widthRatio))+ Theme.paddingMedium +Theme.fontSizeHuge+Theme.paddingLarge 
+
+        width: Screen.width*0.5
+        color: "transparent"
+        border.color: Theme.primaryColor
+        Label
+        {
+            text: "clock and weather"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+       
+        x: page.isPortrait? posSettings.xPosClock: posSettings.xPosLandscapeClock
+        y: page.isPortrait? posSettings.yPosClock + statBar.height -1 :posSettings.yPosLandscapeClock + statBar.height -1         
+        MouseArea
+        {   
+            anchors.fill: parent          
+            drag.target: clockBoxMove
+            onReleased: 
+            {
+                page.isPortrait ? posSettings.xPosClock = Math.round(clockBoxMove.x) :posSettings.xPosLandscapeClock = Math.round(clockBoxMove.x) 
+                page.isPortrait? posSettings.yPosClock = Math.round(clockBoxMove.y) - statBar.height + 1 : posSettings.yPosLandscapeClock = Math.round(clockBoxMove.y) - statBar.height + 1
+            }
+            onPressAndHold:
+            {
+                fcBox.isVisible = true
+                var item = posSettings
+                fcBox.initialise (clockBoxMove)                    
+            }
+        }
     }
             
     Rectangle
@@ -115,8 +168,8 @@ Page
         id: rect
         height: posSettings.maxEvents* (Math.max(posSettings.dateLabelSize, posSettings.timeLabelSize) + posSettings.eventLabelSize) + 2*posSettings.borderThick  
         width: 415*Screen.width/540
-        x: posSettings.xPos
-        y: posSettings.yPos + statBar.height -1
+        x: page.isPortrait? posSettings.xPos: posSettings.xPosLandscape
+        y: page.isPortrait? posSettings.yPos + statBar.height -1 :posSettings.yPosLandscape + statBar.height -1  
         color: "transparent"
         border.color: Theme.primaryColor
         Label
@@ -133,8 +186,8 @@ Page
             drag.target: rect
             onReleased: 
             {
-                posSettings.xPos = Math.round(rect.x)
-                posSettings.yPos = Math.round(rect.y) - statBar.height + 1
+                page.isPortrait ? posSettings.xPos = Math.round(rect.x) :posSettings.xPosLandscape = Math.round(rect.x) 
+                page.isPortrait? posSettings.yPos = Math.round(rect.y) - statBar.height + 1 : posSettings.yPosLandscape = Math.round(rect.y) - statBar.height + 1
             }
             onPressAndHold:
             {
