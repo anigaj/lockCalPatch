@@ -15,44 +15,72 @@
 -        x: twoColumnMode ? screenY : (lockItem.width - width) / 2
 -        y: twoColumnMode ? ((Screen.width - height) / 2)
 -                         : screenY
-+       x:(lockscreenUpcomingSettings.moveClock && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait?lockscreenUpcomingSettings.xPosClock:lockscreenUpcomingSettings.xPosLandscapeClock-clock.offset):(twoColumnMode ? screenY : (lockItem.width - width) / 2)
-+        y:(lockscreenUpcomingSettings.moveClock && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait?lockscreenUpcomingSettings.yPosClock-clock.offset: lockscreenUpcomingSettings.yPosLandscapeClock)+lockItem.verticalOffset-lockItem.statusBarHeight  : (twoColumnMode ? ((Screen.width - height) / 2)
++       x:(lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait? Screen.width/2 + clockPosSettings.xPos- width/2: Screen.height/2 + clockPosSettings.xPosLandscape-width/2-clock.offset):(twoColumnMode ? (Screen.height-width)/2 : (lockItem.width - width) / 2)
++        y:(lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ?(lockScreenPage.isPortrait? clockPosSettings.yPos-clock.offset: clockPosSettings.yPosLandscape) +lockItem.contentTopMargin - lockItem.verticalOffset - 2*lockItem.statusBarHeight  : (twoColumnMode ? height - lockItem.contentTopMargin - lockItem.verticalOffset-clock.offset
 +                         : screenY)
          width: Math.max(clock.width, weatherIndicator.width)
          height: clock.height + weatherIndicator.height
  
-@@ -230,6 +231,56 @@
+@@ -230,15 +231,91 @@
              active: visible
          }
      }
-+ConfigurationGroup {
-+            id: lockscreenUpcomingSettings
-+            path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
-+            property bool fixCalPos: true
-+            property int xPos: 0
-+            property int yPos: 0
-+            property int xPosLandscape: 0
-+            property int yPosLandscape: 0
-+            property bool moveClock: false
-+
-+            property int xPosClock: 0
-+            property int yPosClock: 0
-+            property int xPosLandscapeClock: 0
-+            property int yPosLandscapeClock: 0
-+        }
++    ConfigurationGroup {
++        id: lockscreenUpcomingSettings
++        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
++        property bool fixCalPos: true
++        property bool moveAll: false
++    }
++   ConfigurationGroup
++    {
++        id: calPosSettings
++        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming/cal"      
++        property int xPos: 0
++        property int yPos: 0
++        property int xPosLandscape: 0
++        property int yPosLandscape: 0
++    }
++    ConfigurationGroup
++    {
++        id: clockPosSettings
++        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming/clock"      
++        property int xPos: 0
++        property int yPos: 270
++        property int xPosLandscape: 0
++        property int yPosLandscape:273 
++    }
++    ConfigurationGroup
++    {
++        id: musicPosSettings
++        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming/music"      
++        property int xPos: 135
++        property int yPos: 1777
++        property int xPosLandscape: 1710
++        property int yPosLandscape:337 
++    }
++    ConfigurationGroup
++    {
++        id: callPosSettings
++        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming/call"      
++        property int xPos: 0
++        property int yPos: 2157
++        property int xPosLandscape: 1440
++        property int yPosLandscape: 717
++    }
 +        ShowCalEv
 +        {
 +           id: showcalevents
-+           anchors 
++          anchors 
 +           {
 +               top: lockscreenUpcomingSettings.fixCalPos ?(lockScreenPage.isPortrait?  centerBackground.bottom : centerBackground.top) : undefined
 +               topMargin:lockscreenUpcomingSettings.fixCalPos ?  Theme.paddingMedium: undefined
 +               right: lockscreenUpcomingSettings.fixCalPos ? parent.right: undefined
-+               rightMargin: lockscreenUpcomingSettings.fixCalPos ?  Theme.paddingMedium+(lockScreenPage.isPortrait?0:clock.offset) : undefined
++               /*rightMargin: lockscreenUpcomingSettings.fixCalPos ?  Theme.paddingMedium+(lockScreenPage.isPortrait?0:clock.offset) : undefined*/
++                rightMargin: lockscreenUpcomingSettings.fixCalPos ?(lockScreenPage.isPortrait?  Theme.paddingMedium : lockItem.width - leftIndicator.width - width -clock.offset) : undefined
 +            }
-+           x: lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait? lockscreenUpcomingSettings.xPos  :lockscreenUpcomingSettings.xPosLandscape -clock.offset) 
-+          y : lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait?lockscreenUpcomingSettings.yPos-clock.offset : lockscreenUpcomingSettings.yPosLandscape) +lockItem. verticalOffset-lockItem.statusBarHeight
-+
++           x: lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait? calPosSettings.xPos  :calPosSettings.xPosLandscape -clock.offset) 
++          y : lockscreenUpcomingSettings.fixCalPos ? undefined: (lockScreenPage.isPortrait? calPosSettings.yPos-clock.offset : calPosSettings.yPosLandscape) +lockItem. verticalOffset-2*lockItem.statusBarHeight
+ 
 +            opacity: Math.min(clock.transitionOpacity, clock.unlockOpacity)
 +           state: "hidden"
 +           states: [
@@ -75,6 +103,65 @@
 +               }
 +           ]
 +        }
- 
++
      ContrastBackground {
          id: mprisBackground
+ 
+-        x: twoColumnMode ? lockItem.width - width
+-                           - Math.max(rightIndicator.width + Theme.paddingSmall,
+-                                      (0.25 * (lockItem.width / 2)) / 2)
+-                         : (lockItem.width - width) / 2
+-        y: bottomBackground.y - height - Theme.paddingMedium
++        x: (lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ? (lockScreenPage.isPortrait? musicPosSettings.xPos  :musicPosSettings.xPosLandscape) : (twoColumnMode ? lockItem.width - width
++                         : (lockItem.width - width) / 2)
++        y:(lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ? (lockScreenPage.isPortrait? musicPosSettings.yPos  :musicPosSettings.yPosLandscape) :  (callBackground.y - height - Theme.paddingMedium)
+         width: twoColumnMode ? 0.75 * (lockItem.width / 2)
+                              : Screen.sizeCategory > Screen.Medium ? 4 * Theme.itemSizeExtraLarge
+                                                                    : 0.75 * lockItem.width
+@@ -300,7 +377,26 @@
+             }
+         }
+     }
++    ContrastBackground {
++        id: callBackground
+ 
++        y: (lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ? (lockScreenPage.isPortrait? callPosSettings.yPos  :callPosSettings.yPosLandscape) :  (bottomBackground.y- height)
++        width: lockItem.width
++        x: (lockscreenUpcomingSettings.moveAll && !lockscreenUpcomingSettings.fixCalPos) ? (lockScreenPage.isPortrait? callPosSettings.xPos  :callPosSettings.xPosLandscape) :  (twoColumnMode ? parent.width / 2 : 0)
++        height: onCall.height 
++        visible: clock.visible
++        opacity: clock.transitionOpacity
++
++        Loader {
++            id: onCall
++            active: Desktop.deviceInfo.hasCellularVoiceCallFeature
++            width: twoColumnMode ? parent.width / 2 : parent.width
++
++            sourceComponent: Component {
++                OngoingCall {}
++            }
++        }
++    }
+     ContrastBackground {
+         id: bottomBackground
+ 
+@@ -316,15 +412,16 @@
+             spacing: Theme.paddingSmall
+             width: parent.width
+ 
+-            Loader {
++          /*  Loader {
+                 active: Desktop.deviceInfo.hasCellularVoiceCallFeature
+                 width: twoColumnMode ? parent.width / 2 : parent.width
+-                x: twoColumnMode ? parent.width / 2 : 0
++                //x: twoColumnMode ? parent.width / 2 : 0
++                x: 0
+ 
+                 sourceComponent: Component {
+                     OngoingCall {}
+                 }
+-            }
++            }*/
+ 
+             Row {
+                 id: cellInfoContainer

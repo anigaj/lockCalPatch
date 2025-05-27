@@ -30,7 +30,7 @@ Page {
         property color eventLabelColor: Theme.primaryColor
         property bool showMessage: false
         property bool fixCalPos: true
-        property bool moveClock: false
+        property bool moveAll: false
     }
 
     SilicaFlickable {
@@ -479,10 +479,10 @@ onCurrentItemChanged:lockscreenUpcomingSettings.eventLabelSize = labelToSet
                 id: moveClock
                 visible: !lockscreenUpcomingSettings.fixCalPos
                 width: parent.width
-                text: "Allow clock to also be moved"
-                checked: lockscreenUpcomingSettings.moveClock
+                text: "Allow lockscreen items to also be moved"
+                checked: lockscreenUpcomingSettings.moveAll
                 onClicked: {
-                    lockscreenUpcomingSettings.moveClock = checked
+                    lockscreenUpcomingSettings.moveAll = checked
                 }
             }
            Button 

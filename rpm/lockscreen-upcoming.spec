@@ -45,11 +45,11 @@ fi
 fi
 
 %changelog
-*  Fri Apr 04 2025 Builder <builder@...>
+*  Mon 27 May 2025 Builder <builder@...>
 1.1
 - Compatible with Sailfish 5.0.0
 - Fully supports landscape
-- Added option to change clock position which can then be moved through the set position page
+- Added option to change clock, media and ongoing call  position which can then be moved through the set position page
 1.0
 - Compatible with Sailfish 4.0.1
 - Changed number of events in settings to text box input 

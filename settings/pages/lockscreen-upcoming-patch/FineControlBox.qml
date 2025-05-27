@@ -8,7 +8,7 @@ Item
     ConfigurationGroup
     {
         id: posSettings
-        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming"
+        path: "/desktop/lipstick-jolla-home/lockscreenUpcoming/" + targetSet
         property int xPos: 0
         property int yPos: 0
         property int xPosLandscape: 0
@@ -17,11 +17,17 @@ Item
 
     property bool isVisible
     property  bool isPortrait
-    property Item targetRt 
+    property Item targetRt
+    property string targetSet 
     
-    function initialise( targetRect) 
+    function initialise( targetRect, targetSettings, xPos, yPos, xPosLandscape, yPosLandscape ) 
     {
         targetRt = targetRect
+        targetSet = targetSettings
+        posSettings.xPos = xPos
+        posSettings.yPos = yPos
+        posSettings.xPosLandscape = xPosLandscape
+        posSettings.yPosLandscape = yPosLandscape
     }
 
     MouseArea
